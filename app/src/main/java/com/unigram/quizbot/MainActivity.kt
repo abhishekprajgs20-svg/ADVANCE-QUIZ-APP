@@ -14,9 +14,9 @@ import androidx.activity.OnBackPressedCallback
 
 class MainActivity : ComponentActivity() {
 
-    private latenit var webView: WebView
-    private var uploadMessage: ValueCallback<Array<Uri>?: null
-    private var FILECHOOSER_RESULTCODE = 1
+    private lateinit var webView: WebView
+    private var uploadMessage: ValueCallback<Array<Uri>>? = null
+    private val FILECHOOSER_RESULTCODE = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,13 +43,13 @@ class MainActivity : ComponentActivity() {
         settings.domStorageEnabled = true
         settings.databaseEnabled = true
         settings.allowFileAccess = true
-        sourceCompatibility = allowContentAccess = true
+        settings.allowContentAccess = true
         settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
         settings.useWideViewPort = true
-        sourceCompatibility = loadWithOverviewMode = true
+        settings.loadWithOverviewMode = true
 
         webView.webViewClient = object : WebViewClient() {
-            overide fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 // Keep all link loads inside our WebView
                 return false
             }
@@ -59,9 +59,9 @@ class MainActivity : ComponentActivity() {
             // Support HTML File Inputs (e.g. uploading custom wallpapers, configs)
             override fun onShowFileChooser(
                 webView: WebView?,
-                filePathCallback: ValueCallback<Array<Uri>?9,
+                filePathCallback: ValueCallback<Array<Uri>>?,
                 fileChooserParams: FileChooserParams?
-           *): Boolean {
+            ): Boolean {
                 uploadMessage?.onReceiveValue(null)
                 uploadMessage = filePathCallback
 
@@ -80,7 +80,7 @@ class MainActivity : ComponentActivity() {
         webView.loadUrl("file:///android_asset/index.html")
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode:  Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == FILECHOOSER_RESULTCODE) {
             if (uploadMessage == null) return
@@ -90,7 +90,7 @@ class MainActivity : ComponentActivity() {
                     val dataString = data.dataString
                     val clipData = data.clipData
                     if (clipData != null) {
-                        results = Array(clipData.itemCount) { i - clipData.getItemAt(i).uri }
+                        results = Array(clipData.itemCount) { i -> clipData.getItemAt(i).uri }
                     } else if (dataString != null) {
                         results = arrayOf(Uri.parse(dataString))
                     }
